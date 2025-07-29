@@ -143,7 +143,13 @@ def aplicar_tema_claro():
 # === JANELA PRINCIPAL ===
 janela = TkinterDnD.Tk()
 janela.title("🔍 Leitor de Boletos Inteligente")
-janela.geometry("900x720")
+largura_janela = 900
+altura_janela = 720
+largura_tela = janela.winfo_screenwidth()
+altura_tela = janela.winfo_screenheight()
+pos_x = (largura_tela // 2) - (largura_janela // 2)
+pos_y = (altura_tela // 2) - (altura_janela // 2)
+janela.geometry(f"{largura_janela}x{altura_janela}+{pos_x}+{pos_y}")
 janela.configure(bg="#f9f9f9")
 janela.resizable(False, False)
 
