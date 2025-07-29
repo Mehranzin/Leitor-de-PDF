@@ -1,13 +1,13 @@
 import os
 import re
 import tkinter as tk
-from tkinter import filedialog, messagebox, scrolledtext
+from tkinter import filedialog, messagebox, scrolledtext, ttk
 
 from PIL import Image, ImageFilter
 import pytesseract
 import pdfplumber
 
-# Caminho do Tesseract (ajuste conforme necessário)
+# Caminho do Tesseract
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 def preprocessar_imagem(caminho: str) -> Image.Image:
@@ -66,8 +66,10 @@ def selecionar_arquivo():
         texto = extrair_texto(caminho)
         dados = extrair_dados(texto)
 
+        texto_area.config(state='normal')
         texto_area.delete(1.0, tk.END)
         texto_area.insert(tk.END, texto)
+        texto_area.config(state='disabled')
 
         cliente_var.set(dados["Cliente"])
         vencimento_var.set(dados["Vencimento"])
@@ -78,36 +80,50 @@ def selecionar_arquivo():
 
 # Interface principal
 janela = tk.Tk()
-janela.title("Leitor de Boletos / PDFs")
-janela.geometry("700x600")
+janela.title("🔍 Leitor de Boletos / PDFs")
+janela.geometry("780x650")
+janela.configure(bg="#f2f2f2")
 janela.resizable(False, False)
 
+style = ttk.Style()
+style.theme_use("clam")
+
+style.configure("TButton", font=("Segoe UI", 11), padding=10, background="#4CAF50", foreground="white")
+style.map("TButton", background=[("active", "#45a049")])
+
 # Botão de seleção
-btn_arquivo = tk.Button(janela, text="📂 Selecionar Arquivo", command=selecionar_arquivo, font=("Arial", 12))
-btn_arquivo.pack(pady=10)
+btn_arquivo = ttk.Button(janela, text="📂 Selecionar Arquivo", command=selecionar_arquivo)
+btn_arquivo.pack(pady=20)
 
 # Área de texto extraído
-texto_area = scrolledtext.ScrolledText(janela, wrap=tk.WORD, width=80, height=15, font=("Courier New", 10))
-texto_area.pack(pady=10)
+texto_frame = tk.Frame(janela, bg="#f2f2f2")
+texto_frame.pack(pady=10, padx=10)
+
+texto_area = scrolledtext.ScrolledText(
+    texto_frame, wrap=tk.WORD, width=90, height=18,
+    font=("Courier New", 10), borderwidth=2, relief="groove", bg="white"
+)
+texto_area.pack()
+texto_area.config(state='disabled')
 
 # Campos de dados extraídos
-frame_dados = tk.Frame(janela)
-frame_dados.pack(pady=10)
+frame_dados = tk.Frame(janela, bg="#f2f2f2")
+frame_dados.pack(pady=20)
 
 cliente_var = tk.StringVar()
 vencimento_var = tk.StringVar()
 valor_var = tk.StringVar()
 
-tk.Label(frame_dados, text="👤 Cliente:", font=("Arial", 10)).grid(row=0, column=0, sticky="w")
-tk.Entry(frame_dados, textvariable=cliente_var, width=60).grid(row=0, column=1)
+def criar_linha(label, var, row, emoji):
+    tk.Label(frame_dados, text=f"{emoji} {label}:", font=("Segoe UI", 10, "bold"), bg="#f2f2f2").grid(row=row, column=0, sticky="w", padx=5, pady=5)
+    ttk.Entry(frame_dados, textvariable=var, width=60).grid(row=row, column=1, padx=5, pady=5)
 
-tk.Label(frame_dados, text="📅 Vencimento:", font=("Arial", 10)).grid(row=1, column=0, sticky="w")
-tk.Entry(frame_dados, textvariable=vencimento_var, width=60).grid(row=1, column=1)
-
-tk.Label(frame_dados, text="💰 Valor:", font=("Arial", 10)).grid(row=2, column=0, sticky="w")
-tk.Entry(frame_dados, textvariable=valor_var, width=60).grid(row=2, column=1)
+criar_linha("Cliente", cliente_var, 0, "👤")
+criar_linha("Vencimento", vencimento_var, 1, "📅")
+criar_linha("Valor", valor_var, 2, "💰")
 
 # Rodapé
-tk.Label(janela, text="Desenvolvido por Mehran • v1.0", fg="gray").pack(pady=10)
+rodape = tk.Label(janela, text="Desenvolvido por Mehran • v1.1", font=("Segoe UI", 9), fg="gray", bg="#f2f2f2")
+rodape.pack(pady=10)
 
 janela.mainloop()
