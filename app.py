@@ -12,9 +12,6 @@ from datetime import datetime
 # Configuração do Tesseract OCR
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
-# Arquivo de histórico
-HISTORICO_EXCEL = "historico_dados.xlsx"
-
 # === PRÉ-PROCESSAMENTO ===
 def preprocessar_imagem(caminho: str) -> Image.Image:
     imagem = Image.open(caminho).convert("L")
@@ -68,19 +65,6 @@ def extrair_dados(texto: str) -> dict:
         "CPF/CNPJ": cpf_cnpj
     }
 
-# === EXPORTAR DADOS PARA EXCEL ===
-def salvar_em_excel(dados: dict):
-    if not os.path.exists(HISTORICO_EXCEL):
-        wb = Workbook()
-        ws = wb.active
-        ws.append(["Data", "Cliente", "Vencimento", "Valor", "CPF/CNPJ"])
-    else:
-        wb = load_workbook(HISTORICO_EXCEL)
-        ws = wb.active
-
-    ws.append([datetime.now().strftime("%d/%m/%Y %H:%M:%S"), dados["Cliente"], dados["Vencimento"], dados["Valor"], dados["CPF/CNPJ"]])
-    wb.save(HISTORICO_EXCEL)
-
 # === INTERFACE (GUI) ===
 def selecionar_arquivo(caminho=None):
     if not caminho:
@@ -107,8 +91,6 @@ def selecionar_arquivo(caminho=None):
         vencimento_var.set(dados["Vencimento"])
         valor_var.set(dados["Valor"])
         doc_var.set(dados["CPF/CNPJ"])
-
-        salvar_em_excel(dados)
 
     except Exception as e:
         messagebox.showerror("Erro", f"Erro ao processar o arquivo:\n{e}")
@@ -142,7 +124,7 @@ def aplicar_tema_claro():
 
 # === JANELA PRINCIPAL ===
 janela = TkinterDnD.Tk()
-janela.title("🔍 Leitor de Boletos Inteligente")
+janela.title(" Leitor de PDFs e Boletos")
 largura_janela = 900
 altura_janela = 720
 largura_tela = janela.winfo_screenwidth()
@@ -193,7 +175,7 @@ criar_linha("Valor", valor_var, 2, "💰")
 criar_linha("CPF/CNPJ", doc_var, 3, "🧾")
 
 # Rodapé
-rodape = tk.Label(janela, text="Desenvolvido por Mehran • v1.3", font=("Segoe UI", 9), fg="gray", bg="#f9f9f9")
+rodape = tk.Label(janela, text="Mehran Productions • v1.4", font=("Segoe UI", 9), fg="gray", bg="#f9f9f9")
 rodape.pack(pady=10)
 
 # Suporte a arrastar e soltar
