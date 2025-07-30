@@ -175,7 +175,7 @@ criar_linha("Valor", valor_var, 2, "💰")
 criar_linha("CPF/CNPJ", doc_var, 3, "🧾")
 
 # Rodapé
-rodape = tk.Label(janela, text="Mehran Productions • v1.4", font=("Segoe UI", 9), fg="gray", bg="#f9f9f9")
+rodape = tk.Label(janela, text="Mehran Productions® • v1.4", font=("Segoe UI", 9), fg="gray", bg="#f9f9f9")
 rodape.pack(pady=10)
 
 # Suporte a arrastar e soltar
